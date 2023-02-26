@@ -51,9 +51,6 @@
     "monks-bloodsplats.js",
     "settings.js"
   ],
-  "styles": [
-    "css/monks-bloodsplats.css"
-  ],
   "url": "https://github.com/ironmonk88/monks-bloodsplats",
   "download": "https://github.com/ironmonk88/monks-bloodsplats/archive/10.1.zip",
   "manifest": "https://github.com/ironmonk88/monks-bloodsplats/releases/latest/download/module.json",

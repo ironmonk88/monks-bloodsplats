@@ -1,6 +1,6 @@
 # Monk's Bloodsplats
 Add-On Module for Foundry VTT
-It's just a bunch of little things to make the program run a little smoother and look a little better.  But a lot are based on personal preference.
+Display dead creatures as bloodsplats to keep the battlefield clear of tokens.
 
 ## Installation
 Simply use the install module screen within the FoundryVTT setup

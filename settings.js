@@ -80,4 +80,10 @@ export const registerSettings = function () {
 		},
 		onChange: debouncedReload
 	});
+
+	game.settings.register(modulename, "transfer-settings", {
+		scope: "world",
+		config: false,
+		default: false,
+	});
 };

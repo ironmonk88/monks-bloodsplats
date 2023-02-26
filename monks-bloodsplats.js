@@ -51,7 +51,7 @@ export class MonksBloodsplats {
 
         MonksBloodsplats.availableGlyphs = '!"#$%&\'()*+,-./01234568:;<=>?@ABDEFGHIKMNOPQRSTUVWX[\\]^_`acdfhoquvx|}~¢£¥§©ª«¬®°±¶·º¿ÀÁÂÄÅÆÈÉÊËÌÏÑÒÓÔÖØÙÚÜßàáâåæçéêëìíîïñòõ÷øùûüÿiœŸƒπ';
 
-        MonksBloodsplats.splatfont = new FontFace('WC Rhesus A Bta', "url('modules/monks-little-details/fonts/WCRhesusABta.woff2')");
+        MonksBloodsplats.splatfont = new FontFace('WC Rhesus A Bta', "url('modules/monks-bloodsplats/fonts/WCRhesusABta.woff2')");
         MonksBloodsplats.splatfont.load().then(() => {
             document.fonts.add(MonksBloodsplats.splatfont);
         });
@@ -66,14 +66,52 @@ export class MonksBloodsplats {
         }
     }
 
+    static ready() {
+        if (!setting("transfer-settings") && game.user.isGM) {
+            MonksBloodsplats.transferSettings();
+        }
+    }
+
+    static async transferSettings() {
+        let setSetting = async function (name) {
+            let oldChange = game.settings.settings.get(`monks-bloodsplats.${name}`).onChange;
+            game.settings.settings.get(`monks-bloodsplats.${name}`).onChange = null;
+            await game.settings.set("monks-bloodsplats", name, game.settings.get("monks-little-details", name));
+            game.settings.settings.get(`monks-bloodsplats.${name}`).onChange = oldChange;
+        }
+        
+        await setSetting("bloodsplat-colour");
+        await setSetting("bloodsplat-size");
+        await setSetting("bloodsplat-opacity");
+        await setSetting("treasure-chest");
+        await setSetting("treasure-chest-size");
+
+        for (let scene of game.scenes) {
+            for (let token of scene.tokens) {
+                if (getProperty(token, "flags.monks-little-details.bloodsplat-colour")) {
+                    await token.update({ "flags.monks-bloodsplats.bloodsplat-colour": getProperty(token, "flags.monks-little-details.bloodsplat-colour") });
+                }
+            }
+        }
+
+        for (let actor of game.actors) {
+            if (getProperty(actor.prototypeToken, "flags.monks-little-details.bloodsplat-colour")) {
+                await actor.prototypeToken.update({ "flags.monks-bloodsplats.bloodsplat-colour": getProperty(actor.prototypeToken, "flags.monks-little-details.bloodsplat-colour") });
+            }
+        }
+
+        ui.notifications.warn("Monk's Bloodsplats has transfered over settings from Monk's Little Details, you will need to refresh your browser for some settings to take effect.", { permanent: true });
+
+        await game.settings.set("monks-bloodsplats", "transfer-settings", true);
+    }
+
     static isDefeated(token) {
         return (token && (token.combatant && token.combatant.defeated) || token.actor?.effects.find(e => e.getFlag("core", "statusId") === CONFIG.specialStatusEffects.DEFEATED) || token.document.overlayEffect == CONFIG.controlIcons.defeated);
     }
 }
 
-Hooks.once('init', async function () {
-    MonksBloodsplats.init();
-});
+Hooks.once('init', MonksBloodsplats.init);
+Hooks.once('ready', MonksBloodsplats.ready);
 
 Hooks.on("renderSettingsConfig", (app, html, data) => {
     let colour = setting("bloodsplat-colour");
@@ -169,7 +207,7 @@ Hooks.on("updateToken", (document) => {
 
 Hooks.on("refreshToken", (token) => {
     //find defeated state
-    if (MonksLittleDetails.isDefeated(token) && token.actor?.type !== 'character') {
+    if (MonksBloodsplats.isDefeated(token) && token.actor?.type !== 'character') {
         token.bars.visible = false;
         for (let effect of token.effects.children) {
             effect.alpha = 0;
