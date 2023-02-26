@@ -1,0 +1,18 @@
+{
+	"MonksBloodsplat.show-bloodsplat.name": "Show Bloodsplat",
+	"MonksBloodsplat.show-bloodsplat.hint": "When a monster dies, display it as a blood splat. You can choose to hide the token for the players.",
+	"MonksBloodsplat.bloodsplat-colour.name": "Bloodsplat colour",
+	"MonksBloodsplat.bloodsplat-size.name": "Bloodsplat size",
+	"MonksBloodsplat.bloodsplat-size.hint": "Set the size of the blood splat in comparison to the original token size.",
+	"MonksBloodsplat.bloodsplat-opacity.name": "Bloodsplat Opacity",
+	"MonksBloodsplat.bloodsplat-opacity.hint": "Adjust the transparency of the token behnd the bloodsplat",
+
+	"MonksBloodsplat.treasure-chest.name": "Loot Image",
+	"MonksBloodsplat.treasure-chest.hint": "Image to use when a token has been converted to loot",
+	"MonksBloodsplat.treasure-chest-size.name": "Loot Image Size",
+	"MonksBloodsplat.treasure-chest-size.hint": "Size of the Loot Image compared with the Token size",
+
+	"MonksBloodsplat.bloodsplatoptions.false": "No bloodsplats",
+	"MonksBloodsplat.bloodsplatoptions.true": "Use bloodsplats, hide tokens",
+	"MonksBloodsplat.bloodsplatoptions.both": "Use bloodsplats, show tokens"
+}

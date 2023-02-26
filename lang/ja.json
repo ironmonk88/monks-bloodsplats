@@ -1,0 +1,18 @@
+{
+	"MonksBloodsplat.show-bloodsplat.name": "血糊を表示する",
+	"MonksBloodsplat.show-bloodsplat.hint": "モンスターが死亡したときに血糊を表示します。死亡したコマをプレイヤーに表示するか選択してください。",
+	"MonksBloodsplat.bloodsplat-colour.name": "血糊の色",
+	"MonksBloodsplat.bloodsplat-size.name": "血痕のサイズ",
+	"MonksBloodsplat.bloodsplat-size.hint": "血痕の大きさが、元のコマのサイズに比例するようになります。",
+	"MonksBloodsplat.bloodsplat-opacity.name": "血痕の不透明度",
+	"MonksBloodsplat.bloodsplat-opacity.hint": "血痕の背後に表示されるコマの不透明度を設定します。",
+
+	"MonksBloodsplat.treasure-chest.name": "戦利品の画像",
+	"MonksBloodsplat.treasure-chest.hint": "コマが戦利品に変換されたときに使用する画像を指定します。",
+	"MonksBloodsplat.treasure-chest-size.name": "戦利品画像のサイズ",
+	"MonksBloodsplat.treasure-chest-size.hint": "戦利品に使用される画像と、コマの大きさの比率を指定します。",
+
+	"MonksBloodsplat.bloodsplatoptions.false": "血痕なし",
+	"MonksBloodsplat.bloodsplatoptions.true": "血痕あり／コマを隠す",
+	"MonksBloodsplat.bloodsplatoptions.both": "血痕あり／コマも表示"
+}

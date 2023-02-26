@@ -1,0 +1,10 @@
+{
+	"MonksBloodsplat.show-bloodsplat.name": "Mostrar Mancha de Sangue",
+	"MonksBloodsplat.show-bloodsplat.hint": "Sempre que uma criatura morrer, exibir uma mancha de sangue, escondendo a imagem, barras e efeitos.  Afinal, ele está morto.",
+	"MonksBloodsplat.bloodsplat-colour.name": "Cor da Mancha de Sangue",
+
+	"MonksBloodsplat.treasure-chest.name": "Imagem de Saque",
+	"MonksBloodsplat.treasure-chest.hint": "Imagem que será usada quando um token for convertido em saque",
+	"MonksBloodsplat.treasure-chest-size.name": "Tamanho da Imagem do Saque",
+	"MonksBloodsplat.treasure-chest-size.hint": "Tamanho da imagem de saque em comparação com o tamanho do token"
+}
