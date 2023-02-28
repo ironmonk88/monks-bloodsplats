@@ -67,7 +67,7 @@ export class MonksBloodsplats {
     }
 
     static ready() {
-        if (!setting("transfer-settings") && game.user.isGM) {
+        if (!setting("transfer-settings") && game.user.isGM && game.modules.get("monks-little-details")?.active) {
             MonksBloodsplats.transferSettings();
         }
     }
@@ -83,8 +83,8 @@ export class MonksBloodsplats {
         await setSetting("bloodsplat-colour");
         await setSetting("bloodsplat-size");
         await setSetting("bloodsplat-opacity");
-        await setSetting("treasure-chest");
-        await setSetting("treasure-chest-size");
+        //await setSetting("treasure-chest");
+        //await setSetting("treasure-chest-size");
 
         for (let scene of game.scenes) {
             for (let token of scene.tokens) {
@@ -117,6 +117,7 @@ Hooks.on("renderSettingsConfig", (app, html, data) => {
     let colour = setting("bloodsplat-colour");
     $('<input>').attr('type', 'color').attr('data-edit', 'monks-bloodsplats.bloodsplat-colour').val(colour).insertAfter($('input[name="monks-bloodsplats.bloodsplat-colour"]', html).addClass('color'));
 
+    /*
     let btn = $('<button>')
         .addClass('file-picker')
         .attr('type', 'button')
@@ -136,6 +137,7 @@ Hooks.on("renderSettingsConfig", (app, html, data) => {
             return fp.browse();
         });
     btn.clone(true).insertAfter($('input[name="monks-bloodsplats.treasure-chest"]', html).css({ 'flex-basis': 'unset', 'flex-grow': 1 }));
+    */
 });
 
 Hooks.on("updateSetting", (setting, data, options, userid) => {
@@ -213,11 +215,12 @@ Hooks.on("refreshToken", (token) => {
             effect.alpha = 0;
         }
         if (['dnd5e.LootSheetNPC5e', 'core.MerchantSheet'].includes(token.actor?.flags?.core?.sheetClass) || token.actor?.flags["item-piles"]?.data?.enabled == true) {
-            token.mesh.alpha = 0.5;
+            //token.mesh.alpha = 0.5;
             if (token.bloodsplat) {
                 token.bloodsplat.destroy();
                 delete token.bloodsplat;
             }
+            /*
             if (token.actor?.flags["item-piles"]?.data?.enabled !== true) {
                 if (token.tresurechest == undefined) {
                     if (setting("treasure-chest") != "") {
@@ -237,6 +240,7 @@ Hooks.on("refreshToken", (token) => {
                 if (token.tresurechest != undefined)
                     token.tresurechest.alpha = 0;
             }
+            */
         } else {
             if (token.document._id != undefined) {
                 if (token.bloodsplat?.transform == undefined) {

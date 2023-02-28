@@ -56,6 +56,7 @@ export const registerSettings = function () {
 			step: 0.1
 		},
 	});
+	/*
 	game.settings.register(modulename, "treasure-chest", {
 		name: i18n("MonksBloodsplats.treasure-chest.name"),
 		hint: i18n("MonksBloodsplats.treasure-chest.hint"),
@@ -80,6 +81,7 @@ export const registerSettings = function () {
 		},
 		onChange: debouncedReload
 	});
+	*/
 
 	game.settings.register(modulename, "transfer-settings", {
 		scope: "world",
