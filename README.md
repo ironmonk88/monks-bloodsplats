@@ -15,6 +15,10 @@ The GM will always be able to see the token through the bloodsplat, and by defau
 
 You can also change the transparency, relative size, and colour of the bloodsplat.  And update a token with individual bloodsplat colours.
 
+## Monk's Little Details
+
+This feature was previously part of the Monk's Little Details module, but was split out so that the modules were easier to maintain and could concentrate on the function they did best.
+
 ## Bug Reporting
 Please feel free to contact me on discord if you have any questions or concerns. ironmonk88#4075
 
