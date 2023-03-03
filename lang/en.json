@@ -7,7 +7,6 @@
 	"MonksBloodsplats.bloodsplat-opacity.name": "Bloodsplat Opacity",
 	"MonksBloodsplats.bloodsplat-opacity.hint": "Adjust the transparency of the token behnd the bloodsplat",
 
-	"MonksBloodsplats.bloodsplatoptions.false": "No bloodsplats",
-	"MonksBloodsplats.bloodsplatoptions.true": "Use bloodsplats, hide tokens",
-	"MonksBloodsplats.bloodsplatoptions.both": "Use bloodsplats, show tokens"
+	"MonksBloodsplats.bloodsplatoptions.true": "Hide tokens for players",
+	"MonksBloodsplats.bloodsplatoptions.both": "Show tokens for players"
 }

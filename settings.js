@@ -7,7 +7,6 @@ export const registerSettings = function () {
 	const debouncedReload = foundry.utils.debounce(function () { window.location.reload(); }, 500);
 	
 	let bloodsplatoptions = {
-		'false': i18n("MonksBloodsplats.bloodsplatoptions.false"),
 		'true': i18n("MonksBloodsplats.bloodsplatoptions.true"),
 		'both': i18n("MonksBloodsplats.bloodsplatoptions.both")
 	}
