@@ -1,6 +1,6 @@
 {
   "title": "Monk's Bloodsplats",
-  "description": "Show bloodsplats when a creatures dies to keep the playing field free from tokens.",
+  "description": "Display dead creatures as bloodsplats to keep the battlefield clear of tokens. Bloodsplats are generated randomly per creature and show when the creature has a dead or defeated status. With options to change the colour and transparency of the blood splat, either individually or per world.",
   "version": "10.1",
   "authors": [
     {
