@@ -1,15 +1,21 @@
 # Monk's Bloodsplats
-Add-On Module for Foundry VTT
-Display dead creatures as bloodsplats to keep the battlefield clear of tokens.
+Display dead creatures as bloodsplats to keep the battlefield clear of tokens.  Bloodsplats are generated randomly per creature and show when the creature has a dead or defeated status.  With options to change the colour and transparency of the blood splat, either individually or per world.
 
 ## Installation
 Simply use the install module screen within the FoundryVTT setup
 
 ## Usage & Current Features
-When an Monster is killed, show it as a blood splat rather than the icon.  I find this eliminates a bit of clutter on the screen and makes it easier to see what's going on.  Player characters still show with the skull.
+When an Monster is killed, show it as a blood splat rather than the icon.  This can eliminate a bit of clutter on the screen and makes it easier to see what's going on.
+
+![monks-bloodsplats](/screenshots/player.png)
+
+![monks-bloodsplats](/screenshots/gm.png)
+
+The GM will always be able to see the token through the bloodsplat, and by default the player will only see the bloodsplat, but this is configurable in the settings if you'd rather the players see the token aswell.
+
+You can also change the transparency, relative size, and colour of the bloodsplat.  And update a token with individual bloodsplat colours.
 
 ## Bug Reporting
-I'm sure there are lots of issues with it.  It's very much a work in progress.
 Please feel free to contact me on discord if you have any questions or concerns. ironmonk88#4075
 
 ## Support
