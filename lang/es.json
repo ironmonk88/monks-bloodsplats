@@ -1,6 +1,6 @@
 {
 	"I18N.LANGUAGE": "Español",
-	"I18N.MAINTAINERS": "@Viriato139ac#0342",
+	"I18N.MAINTAINERS": "@Viriato139ac#0342, @WallaceMcGregor#4127",
 
 	"MonksBloodsplats.show-bloodsplat.name": "Mostrar mancha de sangre",
 	"MonksBloodsplats.show-bloodsplat.hint": "Cuando muera un monstruo, mostrarlo como una mancha de sangre, ocultando la imagen, las barras y los efectos. Después de todo, ya está muerto",

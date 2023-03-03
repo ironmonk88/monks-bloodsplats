@@ -7,11 +7,6 @@
 	"MonksBloodsplats.bloodsplat-opacity.name": "Bloodsplat Opacity",
 	"MonksBloodsplats.bloodsplat-opacity.hint": "Adjust the transparency of the token behnd the bloodsplat",
 
-	"MonksBloodsplats.treasure-chest.name": "Loot Image",
-	"MonksBloodsplats.treasure-chest.hint": "Image to use when a token has been converted to loot",
-	"MonksBloodsplats.treasure-chest-size.name": "Loot Image Size",
-	"MonksBloodsplats.treasure-chest-size.hint": "Size of the Loot Image compared with the Token size",
-
 	"MonksBloodsplats.bloodsplatoptions.false": "No bloodsplats",
 	"MonksBloodsplats.bloodsplatoptions.true": "Use bloodsplats, hide tokens",
 	"MonksBloodsplats.bloodsplatoptions.both": "Use bloodsplats, show tokens"

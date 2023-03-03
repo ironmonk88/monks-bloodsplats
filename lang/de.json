@@ -3,11 +3,6 @@
 	"MonksBloodsplats.show-bloodsplat.hint": "Wenn ein Monster stirbt, wird es zu einem Blutspritzer. Du kannst auch einstellen, dass der Token vor den Spielern versteckt wird",
 	"MonksBloodsplats.bloodsplat-colour.name": "Blutspritzerfarbe",
 
-	"MonksBloodsplats.treasure-chest.name": "Beutebild",
-	"MonksBloodsplats.treasure-chest.hint": "Bild, welches benutzt werden soll, wenn der Token in Beute umgewandelt wurde",
-	"MonksBloodsplats.treasure-chest-size.name": "Beutebildgröße",
-	"MonksBloodsplats.treasure-chest-size.hint": "Größe des Beutebildes in Relation zum ursprünglchen Token",
-
 	"MonksBloodsplats.bloodsplatoptions.false": "Keine Blutspritzer",
 	"MonksBloodsplats.bloodsplatoptions.true": "Benutze Blutspritzer, verstecke Tokens",
 	"MonksBloodsplats.bloodsplatoptions.both": "Benutze Blutspritzer, zeige Tokens"

@@ -7,11 +7,6 @@
 	"MonksBloodsplats.bloodsplat-opacity.name": "血痕の不透明度",
 	"MonksBloodsplats.bloodsplat-opacity.hint": "血痕の背後に表示されるコマの不透明度を設定します。",
 
-	"MonksBloodsplats.treasure-chest.name": "戦利品の画像",
-	"MonksBloodsplats.treasure-chest.hint": "コマが戦利品に変換されたときに使用する画像を指定します。",
-	"MonksBloodsplats.treasure-chest-size.name": "戦利品画像のサイズ",
-	"MonksBloodsplats.treasure-chest-size.hint": "戦利品に使用される画像と、コマの大きさの比率を指定します。",
-
 	"MonksBloodsplats.bloodsplatoptions.false": "血痕なし",
 	"MonksBloodsplats.bloodsplatoptions.true": "血痕あり／コマを隠す",
 	"MonksBloodsplats.bloodsplatoptions.both": "血痕あり／コマも表示"

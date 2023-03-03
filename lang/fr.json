@@ -1,10 +1,5 @@
 {
 	"MonksBloodsplats.show-bloodsplat.name": "Afficher la tache de sang",
 	"MonksBloodsplats.show-bloodsplat.hint": "Lorsqu'un monstre meurt, affichez-le comme une tache de sang, en cachant l'image, les barres et les effets.  Il est mort après tout.",
-	"MonksBloodsplats.bloodsplat-colour.name": "Couleur du sang",
-
-	"MonksBloodsplats.treasure-chest.name": "Image du butin",
-	"MonksBloodsplats.treasure-chest.hint": "Image à utiliser lorsqu'un token a été converti en butin",
-	"MonksBloodsplats.treasure-chest-size.name": "Taille de l'image du butin",
-	"MonksBloodsplats.treasure-chest-size.hint": "Taille de l'image du butin par rapport à la taille du token"
+	"MonksBloodsplats.bloodsplat-colour.name": "Couleur du sang"
 }
