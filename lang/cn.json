@@ -1,0 +1,12 @@
+{
+	"MonksBloodsplats.show-bloodsplat.name": "血迹展示",
+	"MonksBloodsplats.show-bloodsplat.hint": "当怪物死亡时将变成一滩血迹，你可以选择是否把怪物token展示给玩家。",
+	"MonksBloodsplats.bloodsplat-colour.name": "血迹颜色",
+	"MonksBloodsplats.bloodsplat-size.name": "血迹大小",
+	"MonksBloodsplats.bloodsplat-size.hint": "设置血迹与原始token尺寸比较的相对大小。",
+	"MonksBloodsplats.bloodsplat-opacity.name": "血迹token透明度",
+	"MonksBloodsplats.bloodsplat-opacity.hint": "调整血迹下token的透明度",
+
+	"MonksBloodsplats.bloodsplatoptions.true": "对玩家隐藏token",
+	"MonksBloodsplats.bloodsplatoptions.both": "对玩家展示token"
+}
