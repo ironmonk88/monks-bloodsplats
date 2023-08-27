@@ -48,7 +48,12 @@
       "lang": "pt-BR",
       "name": "Português (Brasil)",
       "path": "lang/pt-BR.json"
-    }
+    },
+    {
+      "lang": "cn",
+      "name": "简体中文",
+      "path": "lang/cn.json"
+    }  
   ],
   "esmodules": [
     "monks-bloodsplats.js",
