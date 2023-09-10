@@ -1,3 +1,7 @@
+# version 11.03
+
+Fixing some minor issues
+
 # version 11.02
 
 Added the option to set the image and colour specific to the type of creature.

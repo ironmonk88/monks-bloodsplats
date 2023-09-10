@@ -54,7 +54,9 @@ export class MonksBloodsplats {
         if (game.MonksBloodsplats == undefined)
             game.MonksBloodsplats = MonksBloodsplats;
 
-        libWrapper.ignore_conflicts("monks-bloodsplats", "smarttarget", "Token.prototype._canControl")
+        if (game.modules.get("lib-wrapper")?.active) {
+            libWrapper.ignore_conflicts("monks-bloodsplats", "smarttarget", "Token.prototype._canControl")
+        }
 
         MonksBloodsplats.canvasLoading = true;
 
@@ -107,7 +109,7 @@ export class MonksBloodsplats {
     }
 
     static ready() {
-        if (!setting("transfer-settings") && game.user.isGM && game.modules.get("monks-little-details")?.active) {
+        if (game.user.isGM && !setting("transfer-settings") && game.modules.get("monks-little-details")?.active) {
             MonksBloodsplats.transferSettings();
         }
     }
