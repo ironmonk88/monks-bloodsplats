@@ -29,13 +29,20 @@ export let setting = key => {
 };
 
 export let patchFunc = (prop, func, type = "WRAPPER") => {
-    if (game.modules.get("lib-wrapper")?.active) {
-        libWrapper.register("monks-bloodsplats", prop, func, type);
-    } else {
+    let nonLibWrapper = () => {
         const oldFunc = eval(prop);
         eval(`${prop} = function (event) {
-            return func.call(this, oldFunc.bind(this), ...arguments);
+            return func.call(this, ${type != "OVERRIDE" ? "oldFunc.bind(this)," : ""} ...arguments);
         }`);
+    }
+    if (game.modules.get("lib-wrapper")?.active) {
+        try {
+            libWrapper.register("monks-enhanced-journal", prop, func, type);
+        } catch (e) {
+            nonLibWrapper();
+        }
+    } else {
+        nonLibWrapper();
     }
 }
 
@@ -47,29 +54,137 @@ export class MonksBloodsplats {
         if (game.MonksBloodsplats == undefined)
             game.MonksBloodsplats = MonksBloodsplats;
 
+        libWrapper.ignore_conflicts("monks-bloodsplats", "smarttarget", "Token.prototype._canControl")
+
+        MonksBloodsplats.canvasLoading = true;
+
         registerSettings();
 
-        MonksBloodsplats.availableGlyphs = '!"#$%&\'()*+,-./01234568:;<=>?@ABDEFGHIKMNOPQRSTUVWX[\\]^_`acdfhoquvx|}~¢£¥§©ª«¬®°±¶·º¿ÀÁÂÄÅÆÈÉÊËÌÏÑÒÓÔÖØÙÚÜßàáâåæçéêëìíîïñòõ÷øùûüÿiœŸƒπ';
+        if (game.system.id == "dnd5e") {
+            game.settings.settings.get("monks-bloodsplats.blood-types").default = { "default": { "type": "blood", "color": "#ff0000" }, "elemental": { "type": "scorch" }, "fiend": { "type": "scorch" }, "ooze": { "type": "blob", "color": "#0cb300" }, "undead": { "color": "#4a4a4a" } };
+        }
 
-        MonksBloodsplats.splatfont = new FontFace('WC Rhesus A Bta', "url('modules/monks-bloodsplats/fonts/WCRhesusABta.woff2')");
-        MonksBloodsplats.splatfont.load().then(() => {
-            document.fonts.add(MonksBloodsplats.splatfont);
-        });
+        MonksBloodsplats.image_list = setting("image-lists");
+        MonksBloodsplats.blood_types = setting("blood-types");
 
-        let oldTokenDrawOverlay = Token.prototype._drawOverlay;
-        Token.prototype._drawOverlay = async function (src, tint) {
-            if (((this.combatant && this.combatant.defeated) || !!this.actor?.statuses.has(CONFIG.specialStatusEffects.DEFEATED) || this.document.overlayEffect == CONFIG.controlIcons.defeated) && this.actor?.type !== 'character') {
+        patchFunc("Token.prototype._drawOverlay", async function (wrapper, ...args) {
+            let [src, tint] = args;
+            if (MonksBloodsplats.isDefeated(this) && this.actor?.type !== 'character') {
                 //this should be showing the bloodsplat, so don't show the skull overlay
                 return;
             } else
-                return oldTokenDrawOverlay.call(this, src, tint);
-        }
+                return wrapper(...args);
+        }, "MIXED");
+
+        patchFunc("Token.prototype._canControl", function (wrapper, ...args) {
+            let [user, event] = args;
+            let disabletoken = ui.controls.control.tools.find(t => { return t.name == "disabletoken" });
+            if (disabletoken?.active && setting("disabled-bloodsplats") && this.bloodsplat && game.combat?.active && game.combat?.started) {
+                return false;
+            }
+            return wrapper(...args);
+        }, "MIXED");
+
+        patchFunc("Token.prototype._canHover", function (wrapper, ...args) {
+            let [user, event] = args;
+            let disabletoken = ui.controls.control.tools.find(t => { return t.name == "disabletoken" });
+            if (disabletoken?.active && setting("disabled-bloodsplats") && this.bloodsplat && game.combat?.active && game.combat?.started) {
+                return false;
+            }
+            return wrapper(...args);
+        }, "MIXED");
+
+        patchFunc("TokenMesh.prototype.getDisplayAttributes", function (wrapper, ...args) {
+            let result = wrapper(...args);
+
+            if (MonksBloodsplats.isDefeated(this.object) && this.object?.actor?.type !== 'character') {
+                const iconAlpha = (game.user.isGM || (setting("show-bloodsplat") == "both" && !this.object?.document.hidden) ? setting("bloodsplat-opacity") : 0);
+                result.alpha = iconAlpha;
+            }
+
+            return result;
+        });
     }
 
     static ready() {
         if (!setting("transfer-settings") && game.user.isGM && game.modules.get("monks-little-details")?.active) {
             MonksBloodsplats.transferSettings();
         }
+    }
+
+    static getBloodType(token) {
+        let types = [];
+        if (game.system.id == "dnd5e") {
+            types = [getProperty(token, "actor.system.details.type.subtype"), getProperty(token, "actor.system.details.type.value")].filter(t => !!t);
+        } else if (game.system.id == "pf2e") {
+            types = getProperty(token, "actor.system.traits.value") || [];
+        }
+
+        let bloodType = {
+            type: getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-type'),
+            color: getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-colour'),
+            size: getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-size')
+        };
+        if (bloodType.type == undefined || bloodType.color == undefined || bloodType.size == undefined) {
+            for (let type of types) {
+                if (MonksBloodsplats.blood_types[type]) {
+                    let typeData = MonksBloodsplats.blood_types[type];
+                    if (typeData.type && bloodType.type == undefined)
+                        bloodType.type = typeData.type;
+                    if (typeData.color && bloodType.color == undefined)
+                        bloodType.color = typeData.color;
+                    if (typeData.size && bloodType.size == undefined)
+                        bloodType.size = typeData.size;
+                }
+                if (bloodType.type != undefined && bloodType.color != undefined && bloodType.size != undefined)
+                    break;
+            }
+        }
+        if (bloodType.type == undefined)
+            bloodType.type = MonksBloodsplats.blood_types.default.type || "blood";
+        if (bloodType.color == undefined)
+            bloodType.color = MonksBloodsplats.blood_types.default.color;
+        if (bloodType.size == undefined)
+            bloodType.size = MonksBloodsplats.blood_types.default.size;
+
+        return bloodType;
+    }
+
+    static async getBloodImage(token, animate) {
+        let blood = MonksBloodsplats.getBloodType(token);
+        let bloodType = blood.type;
+        if (bloodType == 'none')
+            return;
+
+        let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.length !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
+
+        let index = getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
+        if (index == undefined || index >= list.length) {
+            index = Math.floor(Math.random() * list.length);
+            if (game.user.isGM)
+                await token.document.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
+        }
+
+        let filename = `/modules/monks-bloodsplats/images/${list.id}/${index}.webp`
+        const tex = getTexture(filename) || await loadTexture(filename);
+        if (!tex)
+            return;
+
+        let s = new PIXI.Sprite(tex);
+
+        let colour = blood.color || list.color || '#ff0000';
+        let size = blood.size || list.size || setting("bloodsplat-size") || 1;
+        s.tint = colour;
+        s.alpha = (animate || (token.document.hidden && !game.user.isGM) ? 0 : 0.7);
+        s.blendMode = PIXI.BLEND_MODES.OVERLAY;
+        s.anchor.set(0.5, 0.5);
+        s.width = Math.abs(token.w) * size;
+        s.height = (Math.abs(token.h) * size);
+        s.x = token.x + (Math.abs(token.w) / 2);
+        s.y = token.y + (Math.abs(token.h) / 2);
+        s.visible = token.isVisible;
+
+        return s;
     }
 
     static async transferSettings() {
@@ -106,7 +221,174 @@ export class MonksBloodsplats {
     }
 
     static isDefeated(token) {
-        return (token && (token.combatant && token.combatant.defeated) || !!token.actor?.statuses.has(CONFIG.specialStatusEffects.DEFEATED) || token.document.overlayEffect == CONFIG.controlIcons.defeated);
+        return (token && (token.combatant?.defeated ||
+            !!token.actor?.statuses.has(CONFIG.specialStatusEffects.DEFEATED) ||
+            token.document?.overlayEffect == CONFIG.controlIcons.defeated));
+    }
+
+    static async refreshBloodsplat(token) {
+        if (MonksBloodsplats.isDefeated(token) && token.actor?.type !== 'character') {
+            token.bars.visible = false;
+            for (let effect of token.effects.children) {
+                effect.alpha = 0;
+            }
+            if (['dnd5e.LootSheetNPC5e', 'core.MerchantSheet'].includes(token.actor?.flags?.core?.sheetClass) || token.actor?.flags["item-piles"]?.data?.enabled == true) {
+                //token.mesh.alpha = 0.5;
+                if (token.bloodsplat) {
+                    token.bloodsplat.destroy();
+                    delete token.bloodsplat;
+                }
+            } else if (token.document._id != undefined) {
+                if (MonksBloodsplats.getBloodType(token).type == 'unconscious') {
+                    token.mesh.alpha = token.mesh.data.alpha;
+                    return;
+                }
+
+                let disabletoken = ui.controls.control.tools.find(t => { return t.name == "disabletoken" });
+                if (token.controlled && disabletoken?.active && setting("disabled-bloodsplats") && game.combat?.active && game.combat?.started)
+                    token.release();
+
+                if (token.bloodsplat?.transform == undefined) {
+                    if (token._animateTo === undefined) {
+                        let animate = canvas.ready && !token._original && !MonksBloodsplats.canvasLoading;
+                        if (token.bloodsplat)
+                            token.bloodsplat.destroy();
+
+                        token.bloodsplat = await MonksBloodsplats.getBloodImage(token, animate);
+                        if (token.bloodsplat)
+                            canvas.grid.bloodsplats.addChild(token.bloodsplat);
+
+                        const iconAlpha = (game.user.isGM || (setting("show-bloodsplat") == "both" && !token.document.hidden) ? setting("bloodsplat-opacity") : 0);
+                        if (animate && token.bloodsplat) {
+                            token._animateTo = iconAlpha;
+
+                            const attributes = [
+                                { parent: token.bloodsplat, attribute: 'alpha', to: 0.7 },
+                                { parent: token.mesh, attribute: 'alpha', to: iconAlpha }
+                            ];
+
+                            CanvasAnimation.animate(attributes, {
+                                name: "bloodsplatAnimation" + token.id,
+                                context: token,
+                                duration: 800
+                            }).then(() => {
+                                delete token._animateTo;
+                            });
+                        } else {
+                            token.mesh.alpha = iconAlpha;
+                        }
+                    }
+                } else {
+                    const iconAlpha = (game.user.isGM || (setting("show-bloodsplat") == "both" && !token.document.hidden) ? setting("bloodsplat-opacity") : 0);
+                    if (token._animateTo != iconAlpha)
+                        token.mesh.alpha = iconAlpha;
+                    token.bloodsplat.position.set(token.x + (token.w / 2), token.y + (token.h / 2));
+                    token.bloodsplat.visible = token.isVisible;
+                }
+            }
+        } else {
+            if (token.bloodsplat && token._animateTo === undefined) {
+                let animate = canvas.ready && !token._original && !MonksBloodsplats.canvasLoading;
+
+                const alpha = token.mesh.data.alpha;
+                if (animate) {
+                    token._animateTo = alpha;
+
+                    const attributes = [
+                        { parent: token.bloodsplat, attribute: 'alpha', to: 0 },
+                        { parent: token.mesh, attribute: 'alpha', to: alpha }
+                    ];
+
+                    CanvasAnimation.animate(attributes, {
+                        name: "bloodsplatAnimation" + token.id,
+                        context: token,
+                        duration: 800
+                    }).then(() => {
+                        delete token._animateTo;
+                        if (token.bloodsplat) {
+                            token.bloodsplat.destroy();
+                            delete token.bloodsplat;
+                        }
+                    });
+                } else {
+                    token.mesh.alpha = alpha;
+                    token.bloodsplat.destroy();
+                    delete token.bloodsplat;
+                }
+            }
+        }
+    }
+
+    static exportImages() {
+        // load xml file using jquery ajax
+        let typeId = "bones";
+        $.ajax({
+            type: "GET",
+            url: `modules/monks-bloodsplats/images/${typeId}.xml`,
+            dataType: "xml",
+            success: function (xml) {
+                // parse xml file and get data
+                let images = xml.getElementsByTagName("glyph");
+
+                // loop through each image and add it to the page
+                $(images).each(function (index) {
+                    var $this = $(this);
+                    //find the d attribute of this image
+                    var d = $this.attr("d");
+                    // create a new svg element
+                    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+                    // create a path using the d attribute and add it to the svg
+                    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttributeNS(null, "d", d);
+                    // set the fill and stroke of the path to white
+                    path.setAttributeNS(null, "fill", "white");
+                    path.setAttributeNS(null, "stroke", "white");
+                    var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    g.setAttributeNS(null, "transform", "translate(0, 0)");
+                    g.appendChild(path);
+                    svg.appendChild(g);
+                    // add the svg element to the page
+                    document.body.appendChild(svg);
+
+                    // get the BBox of the path
+                    var bbox = svg.getBBox();
+                    // set the viewBox attribute of the svg
+                    bbox.x -= 5;
+                    bbox.y -= 5;
+                    bbox.width += 10;
+                    bbox.height += 10;
+
+                    svg.setAttributeNS(null, "viewBox", bbox.x + " " + bbox.y + " " + bbox.width + " " + bbox.height);
+                    // set the width and height of the svg
+                    svg.setAttributeNS(null, "width", 500);
+                    svg.setAttributeNS(null, "height", 500);
+                    // add the height and width styles to the svg
+                    svg.setAttributeNS(null, "style", "width: " + 500 + "px; height: " + 500 + "px;");
+                    // convert to svg to a javascript File object
+                    var svgBlob = new Blob([svg.outerHTML], { type: "image/svg+xml;charset=utf-8" });
+                    // convert the blob to a File object and increment a counter to add to the filename
+                    var svgFile = new File([svgBlob], `${index}.svg`, { type: "image/svg+xml;charset=utf-8" });
+
+                    // use FilePicker to uplaod the svg to the server
+                    FilePicker.upload("data", `modules/monks-bloodsplats/images/${typeId}`, svgFile,
+                        {
+                            bucket: "public",
+                            path: `modules/monks-bloodsplats/images/${typeId}`,
+                        },
+                        { notify: false }
+                    ).then((path) => {
+                        console.log(path);
+                    });
+
+                    // remove the svg from the page
+                    svg.remove();
+                });
+
+            }
+
+        });
     }
 }
 
@@ -114,8 +396,8 @@ Hooks.once('init', MonksBloodsplats.init);
 Hooks.once('ready', MonksBloodsplats.ready);
 
 Hooks.on("renderSettingsConfig", (app, html, data) => {
-    let colour = setting("bloodsplat-colour");
-    $('<input>').attr('type', 'color').attr('data-edit', 'monks-bloodsplats.bloodsplat-colour').val(colour).insertAfter($('input[name="monks-bloodsplats.bloodsplat-colour"]', html).addClass('color'));
+    //let colour = setting("bloodsplat-colour");
+    //$('<input>').attr('type', 'color').attr('data-edit', 'monks-bloodsplats.bloodsplat-colour').val(colour).insertAfter($('input[name="monks-bloodsplats.bloodsplat-colour"]', html).addClass('color'));
 
     /*
     let btn = $('<button>')
@@ -148,42 +430,62 @@ Hooks.on("updateSetting", (setting, data, options, userid) => {
     }
 });
 
-Hooks.on("createCombatant", function (combatant, data, options) {
-    //set the blood glyph if this is the GM
+Hooks.on("createCombatant", async function (combatant, data, options) {
+    //set the blood index if this is the GM
     if (setting('show-bloodsplat') != "false" && combatant && game.user.isGM) {
         let token = combatant.token; //canvas.tokens.placeables.find(t => { return (t.id == combatant._token.id); });
         if (token) {
-            let glyph = token.getFlag('monks-bloodsplats', 'glyph');
-            if (glyph == undefined) {
-                glyph = MonksBloodsplats.availableGlyphs.charAt(Math.floor(Math.random() * MonksBloodsplats.availableGlyphs.length));
-                token.setFlag('monks-bloodsplats', 'glyph', glyph);
+            let blood = MonksBloodsplats.getBloodType(token);
+            let bloodType = blood.type || blood;
+            if (bloodType == 'none' || bloodType == 'unconscious')
+                return;
+
+            let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.length !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
+
+            let index = getProperty(token, 'flags.monks-bloodsplats.bloodsplat-index');
+            if (index == undefined || index >= list.length) {
+                index = Math.floor(Math.random() * list.length);
+                await token.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
             }
         }
     }
 });
 
 Hooks.on("updateCombat", async function (combat, delta) {
-    let combatStarted = (combat && (delta.round === 1 && combat.turn === 0 && combat.started === true));
+    let combatStarted = (combat && (delta?.round === 1 && combat.turn === 0 && combat.started === true));
 
-    //set the bloodsplat glyph when the combat starts to maintain consistency
+    //set the bloodsplat index when the combat starts to maintain consistency
     if (setting('show-bloodsplat') != "false" && game.user.isGM && combatStarted) {
         for (let combatant of combat.combatants) {
             let token = combatant.token; //canvas.tokens.placeables.find(t => { return t.id == combatant._token.id; });
             if (token) {
-                let glyph = token.getFlag('monks-bloodsplats', 'glyph');
-                if (glyph == undefined) {
-                    glyph = MonksBloodsplats.availableGlyphs.charAt(Math.floor(Math.random() * MonksBloodsplats.availableGlyphs.length));
-                    await token.setFlag('monks-bloodsplats', 'glyph', glyph);
+                let blood = MonksBloodsplats.getBloodType(token);
+                let bloodType = blood.type || blood;
+                if (bloodType == 'none' || bloodType == 'unconscious')
+                    return;
+
+                let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.length !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
+
+                let index = getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
+                if (index == undefined || index >= list.length) {
+                    index = Math.floor(Math.random() * list.length);
+                    await token.document.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
                 }
             }
         }
     }
 });
 
+Hooks.on("updateCombatant", async function (combatant, data, options) {
+    let token = combatant.token;
+    if (token && setting("remove-effects") && MonksBloodsplats.isDefeated(token) && game.modules.get("sequencer")?.active && token.actor?.type !== 'character') {
+        Sequencer.EffectManager.endEffects({ object: token });
+    }
+});
+
 Hooks.on("renderTokenConfig", (app, html, data) => {
     if (game.user.isGM) {
         let colour = getProperty(app.token, "flags.monks-bloodsplats.bloodsplat-colour");
-
         $('<div>')
             .addClass('form-group')
             .append($('<label>').html('Bloodsplat Colour'))
@@ -193,121 +495,47 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
             )
             .insertAfter($('[name="alpha"]', html).closest('.form-group'));
 
+        let bloodType = MonksBloodsplats.getBloodType(app.token);
+        bloodType = bloodType.id || bloodType;
+        let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.length !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
+        let type = getProperty(app.token, "flags.monks-bloodsplats.bloodsplat-type");
+        $('<div>')
+            .addClass('form-group')
+            .append($('<label>').html('Bloodsplat Image'))
+            .append($('<div>').addClass('form-fields')
+                .append($('<select>').attr('name', 'flags.monks-bloodsplats.bloodsplat-type')
+                    .append($('<option>').attr('value', '').html(`-- Default (${list.name}) --`))
+                    .append(MonksBloodsplats.image_list.filter((il) => il.length !== 0 || il.id == "none").map((il) => {
+                        return $('<option>').attr('value', il.id).html(il.name);
+                    }))
+                    .val(type)
+            ))
+            .insertAfter($('[name="alpha"]', html).closest('.form-group'));
+
         app.setPosition();
     }
 });
 
-/*
-Hooks.on("updateToken", (document) => {
+Hooks.on("updateToken", async (document, data) => {
     let token = document.object;
-    if (token) {
+    if (token && getProperty(data, "flags.monks-bloodsplats") != undefined) {
         //refresh the bloodsplat if there is one
-        canvas.primary.removeChild(token.bloodsplat);
-        delete token.bloodsplat;
-    }
-});*/
-
-Hooks.on("refreshToken", (token) => {
-    //find defeated state
-    if (MonksBloodsplats.isDefeated(token) && token.actor?.type !== 'character') {
-        token.bars.visible = false;
-        for (let effect of token.effects.children) {
-            effect.alpha = 0;
-        }
-        if (['dnd5e.LootSheetNPC5e', 'core.MerchantSheet'].includes(token.actor?.flags?.core?.sheetClass) || token.actor?.flags["item-piles"]?.data?.enabled == true) {
-            //token.mesh.alpha = 0.5;
-            if (token.bloodsplat) {
-                token.bloodsplat.destroy();
-                delete token.bloodsplat;
-            }
-            /*
-            if (token.actor?.flags["item-piles"]?.data?.enabled !== true) {
-                if (token.tresurechest == undefined) {
-                    if (setting("treasure-chest") != "") {
-                        loadTexture(setting("treasure-chest")).then((tex) => {
-                            const chesticon = new PIXI.Sprite(tex);
-                            const size = Math.min(canvas.grid.grid.w, canvas.grid.grid.h);
-                            chesticon.width = chesticon.height = size * setting("treasure-chest-size");
-                            chesticon.position.set((token.w - chesticon.width) / 2, (token.h - chesticon.height) / 2);
-                            chesticon.alpha = 0.8;
-                            token.tresurechest = chesticon;
-                            token.addChild(token.tresurechest);
-                        });
-                    }
-                } else
-                    token.tresurechest.alpha = (token.hover ? 1 : 0.8);
-            } else {
-                if (token.tresurechest != undefined)
-                    token.tresurechest.alpha = 0;
-            }
-            */
-        } else {
-            if (token.document._id != undefined) {
-                if (token.bloodsplat?.transform == undefined) {
-                    let animate = canvas.ready && !token._original;
-                    if (token.bloodsplat)
-                        token.bloodsplat.destroy();
-
-                    let glyph = token.document.getFlag('monks-bloodsplats', 'glyph');
-                    if (glyph == undefined) {
-                        glyph = MonksBloodsplats.availableGlyphs.charAt(Math.floor(Math.random() * MonksBloodsplats.availableGlyphs.length));
-                        if (game.user.isGM)
-                            token.document.setFlag('monks-bloodsplats', 'glyph', glyph);
-                    }
-                    let colour = token.document.getFlag('monks-bloodsplats', 'bloodsplat-colour') || setting('bloodsplat-colour') || '0xff0000';
-                    token.bloodsplat = new PIXI.Text(' ' + glyph + ' ', { fontFamily: 'WC Rhesus A Bta', fontSize: token.h * setting("bloodsplat-size"), fill: colour, align: 'center' });
-                    token.bloodsplat.alpha = (animate || (token.document.hidden && !game.user.isGM) ? 0 : 0.7);
-                    token.bloodsplat.blendMode = PIXI.BLEND_MODES.OVERLAY;
-                    token.bloodsplat.anchor.set(0.5, 0.5);
-                    token.bloodsplat.x = token.x + (token.w / 2);
-                    token.bloodsplat.y = token.y + (token.h / 2);
-                    token.bloodsplat.visible = token.isVisible;
-                    canvas.grid.bloodsplats.addChild(token.bloodsplat);
-
-                    //log('Font: ', token.id, (token.h * 1.5), token.bloodsplat.x, token.bloodsplat.y);
-
-                    const iconAlpha = (game.user.isGM || (setting("show-bloodsplat") == "both" && !token.document.hidden) ? setting("bloodsplat-opacity") : 0);
-                    if (animate) {
-                        //animate the bloodsplat alpha to 0.7
-                        //animate the icon alpha to (game.user.isGM || setting("show-bloodsplat") == "both" ? 0.2 : 0);
-
-                        token._animateTo = iconAlpha;
-
-                        const attributes = [
-                            { parent: token.bloodsplat, attribute: 'alpha', to: 0.7 },
-                            { parent: token.mesh, attribute: 'alpha', to: iconAlpha }
-                        ];
-
-                        CanvasAnimation.animate(attributes, {
-                            name: "bloodsplatAnimation" + token.id,
-                            context: token,
-                            duration: 800
-                        }).then(() => {
-                            delete token._animateTo;
-                        });
-                    } else
-                        token.mesh.alpha = iconAlpha;
-                } else {
-                    const iconAlpha = (game.user.isGM || (setting("show-bloodsplat") == "both" && !token.document.hidden) ? setting("bloodsplat-opacity") : 0);
-                    if (token._animateTo != iconAlpha)
-                        token.mesh.alpha = iconAlpha;
-                    token.bloodsplat.position.set(token.x + (token.w / 2), token.y + (token.h / 2));
-                    token.bloodsplat.visible = token.isVisible;
-                }
-                if (token.tresurechest != undefined)
-                    token.tresurechest.alpha = 0;
-            }
-        }
-    } else {
         if (token.bloodsplat) {
             token.bloodsplat.destroy();
             delete token.bloodsplat;
         }
-        if (token.tresurechest) {
-            token.removeChild(token.tresurechest);
-            delete token.tresurechest;
-        }
+
+        await MonksBloodsplats.refreshBloodsplat(token);
     }
+
+    if (token && setting("remove-effects") && MonksBloodsplats.isDefeated(token) && game.modules.get("sequencer")?.active && token.actor?.type !== 'character') {
+        Sequencer.EffectManager.endEffects({ object: token });
+    }
+});
+
+Hooks.on("refreshToken", async (token) => {
+    //find defeated state
+    await MonksBloodsplats.refreshBloodsplat(token);
 });
 
 Hooks.on("updateToken", function (document, data, options, userid) {
@@ -336,4 +564,25 @@ Hooks.on("sightRefresh", function () {
 
 Hooks.on("drawGridLayer", function (layer) {
     layer.bloodsplats = layer.addChildAt(new PIXI.Container(), layer.ldmarkers?.parent ? layer.getChildIndex(layer.ldmarkers) : layer.getChildIndex(layer.borders));
+});
+
+
+Hooks.on("tearDownTokenLayer", function () {
+    MonksBloodsplats.canvasLoading = true;
+});
+Hooks.on("lightingRefresh", function () {
+    MonksBloodsplats.canvasLoading = false;
+});
+
+Hooks.on("getSceneControlButtons", (controls) => {
+    if (setting("disabled-bloodsplats")) {
+        let tokenControls = controls.find(control => control.name === "token")
+        tokenControls.tools.push({
+            name: "disabletoken",
+            title: "MonksBloodsplats.DisableToken",
+            icon: "fas fa-splotch",
+            toggle: true,
+            active: true,
+        });
+    }
 });

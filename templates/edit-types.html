@@ -1,0 +1,41 @@
+<div class="flexcol">
+    <form>
+        <div class="form-group">
+            <label style="flex:1;">Default</label>
+            <div class="form-fields" style="justify-content:flex-end;">
+                <select style="flex: 3;" name="types.default.type">
+                    {{selectOptions bloodOptions nameAttr="id" labelAttr="name" localize=true selected=defaultType.type}}
+                </select>
+                <input class="color" type="text" name="types.default.color" value="{{ defaultType.color }}">
+                <input type="color" value="{{ defaultType.color }}" data-edit="types.default.color">
+            </div>
+        </div>
+        <hr />
+        <div style="max-height: 500px;overflow-y:auto;">
+            {{#each types}}
+            {{#unless this.default}}
+            <div class="form-group">
+                <label style="flex:1;">{{this.label}}</label>
+                <div class="form-fields" style="justify-content:flex-end;">
+                    <select style="flex: 3;" name="types.{{this.id}}.type">
+                        <option value=""></option>
+                        {{selectOptions ../bloodOptions nameAttr="id" labelAttr="name" localize=true selected=this.type}}
+                    </select>
+                    <input class="color" type="text" name="types.{{this.id}}.color" value="{{ this.color }}">
+                    <input type="color" value="{{ this.color }}" data-edit="types.{{this.id}}.color">
+                </div>
+            </div>
+            {{/unless}}
+            {{/each}}
+        </div>
+
+        <footer class="sheet-footer flexrow" style="flex-grow:0;">
+            <button type="button" name="submit">
+                <i class="far fa-save"></i> {{localize 'MonksEnhancedJournal.SaveChanges'}}
+            </button>
+            <button type="button" name="reset">
+                <i class="fas fa-undo"></i> {{localize 'MonksEnhancedJournal.ResetDefaults'}}
+            </button>
+        </footer>
+    </form>
+</div>

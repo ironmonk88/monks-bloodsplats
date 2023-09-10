@@ -1,15 +1,22 @@
 import { MonksBloodsplats, i18n } from "./monks-bloodsplats.js";
+import { EditTypes} from "./apps/edit-types.js"
 
 export const registerSettings = function () {
     // Register any custom module settings here
 	let modulename = "monks-bloodsplats";
 
-	const debouncedReload = foundry.utils.debounce(function () { window.location.reload(); }, 500);
-	
 	let bloodsplatoptions = {
 		'true': i18n("MonksBloodsplats.bloodsplatoptions.true"),
 		'both': i18n("MonksBloodsplats.bloodsplatoptions.both")
 	}
+
+	game.settings.registerMenu(modulename, 'editTypes', {
+		label: i18n("MonksBloodsplats.edit-types.name"),
+		hint: i18n("MonksBloodsplats.edit-types.hint"),
+		icon: 'fas fa-coins',
+		restricted: true,
+		type: EditTypes
+	});
 
 	game.settings.register(modulename, "show-bloodsplat", {
 		name: i18n("MonksBloodsplats.show-bloodsplat.name"),
@@ -19,28 +26,7 @@ export const registerSettings = function () {
 		default: "true",
 		choices: bloodsplatoptions,
 		type: String,
-		onChange: debouncedReload
-	});
-	game.settings.register(modulename, "bloodsplat-colour", {
-		name: i18n("MonksBloodsplats.bloodsplat-colour.name"),
-		scope: "world",
-		config: true,
-		default: '#FF0000',
-		type: String,
-		onChange: debouncedReload
-	});
-	game.settings.register(modulename, "bloodsplat-size", {
-		name: i18n("MonksBloodsplats.bloodsplat-size.name"),
-		hint: i18n("MonksBloodsplats.bloodsplat-size.hint"),
-		scope: "world",
-		config: true,
-		default: 1,
-		type: Number,
-		range: {
-			min: 0.2,
-			max: 2,
-			step: 0.1
-		},
+		requiresReload: true
 	});
 	game.settings.register(modulename, "bloodsplat-opacity", {
 		name: i18n("MonksBloodsplats.bloodsplat-opacity.name"),
@@ -54,6 +40,46 @@ export const registerSettings = function () {
 			max: 1,
 			step: 0.1
 		},
+		requiresReload: true
+	});
+	game.settings.register(modulename, "bloodsplat-size", {
+		name: i18n("MonksBloodsplats.bloodsplat-size.name"),
+		hint: i18n("MonksBloodsplats.bloodsplat-size.hint"),
+		scope: "world",
+		config: true,
+		default: 1,
+		type: Number,
+		range: {
+			min: 0.2,
+			max: 2,
+			step: 0.1
+		},
+		requiresReload: true
+	});
+	game.settings.register(modulename, "disabled-bloodsplats", {
+		name: i18n("MonksBloodsplats.disabled-bloodsplats.name"),
+		hint: i18n("MonksBloodsplats.disabled-bloodsplats.hint"),
+		scope: "world",
+		config: true,
+		default: true,
+		type: Boolean,
+		requiresReload: true
+	});
+	game.settings.register(modulename, "remove-effects", {
+		name: i18n("MonksBloodsplats.remove-effects.name"),
+		hint: i18n("MonksBloodsplats.remove-effects.hint"),
+		scope: "world",
+		config: true,
+		default: true,
+		type: Boolean,
+	});
+	game.settings.register(modulename, "bloodsplat-colour", {
+		name: i18n("MonksBloodsplats.bloodsplat-colour.name"),
+		scope: "world",
+		config: false,
+		default: '#ff0000',
+		type: String,
+		requiresReload: true
 	});
 	/*
 	game.settings.register(modulename, "treasure-chest", {
@@ -64,7 +90,7 @@ export const registerSettings = function () {
 		default: "icons/svg/chest.svg",
 		type: String,
 		//filePicker: true,
-		onChange: debouncedReload
+		requiresReload: true
 	});
 	game.settings.register(modulename, "treasure-chest-size", {
 		name: i18n("MonksBloodsplats.treasure-chest-size.name"),
@@ -78,9 +104,73 @@ export const registerSettings = function () {
 			max: 1,
 			step: 0.1
 		},
-		onChange: debouncedReload
+		requiresReload: true
 	});
 	*/
+
+	game.settings.register(modulename, "image-lists", {
+		scope: "world",
+		config: false,
+		default: [
+			{
+				"id": "none",
+				"name": "None"
+			},
+			{
+				"id": "unconscious",
+				"name": "Unconscious"
+			},
+			{
+				"id": "blood",
+				"name": "Blood",
+				"color": "#ff0000",
+				"length": 222,
+				"opacity": 1,
+			},
+			{
+				"id": "scorch",
+				"name": "Scorch Marks",
+				"color": "#000000",
+				"length": 16,
+				"opacity": 1,
+			},
+			{
+				"id": "blob",
+				"name": "Blob",
+				"color": "#00ff00",
+				"length": 10,
+				"opacity": 1,
+			},
+			{
+				"id": "bones",
+				"name": "Bones",
+				"color": "#ffffff",
+				"length": 17,
+				"opacity": 1,
+				"size": 0.8,
+			},
+			{
+				"id": "corpse",
+				"name": "Corpses",
+				"color": "#ffffff",
+				"length": 11,
+				"opacity": 1,
+			},
+		],
+		type: Array,
+	});
+
+	game.settings.register(modulename, "blood-types", {
+		scope: "world",
+		config: false,
+		default: {
+			default: {
+				type: "blood",
+				color: "#ff0000"
+			}
+		},
+		type: Object,
+	});
 
 	game.settings.register(modulename, "transfer-settings", {
 		scope: "world",
