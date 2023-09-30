@@ -1,3 +1,11 @@
+# version 11.04
+
+Added ignore conflict with easy targeting
+
+Added the option to use a different folder for the bloodsplat images than the bloodsplat module folder.
+
+Fixed issue with tokens that don't have an associated document.
+
 # version 11.03
 
 Fixing some minor issues

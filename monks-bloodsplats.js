@@ -55,7 +55,8 @@ export class MonksBloodsplats {
             game.MonksBloodsplats = MonksBloodsplats;
 
         if (game.modules.get("lib-wrapper")?.active) {
-            libWrapper.ignore_conflicts("monks-bloodsplats", "smarttarget", "Token.prototype._canControl")
+            libWrapper.ignore_conflicts("monks-bloodsplats", "smarttarget", "Token.prototype._canControl");
+            libWrapper.ignore_conflicts("monks-bloodsplats", "easy-target", "Token.prototype._canControl");
         }
 
         MonksBloodsplats.canvasLoading = true;
@@ -167,8 +168,9 @@ export class MonksBloodsplats {
                 await token.document.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
         }
 
-        let filename = `/modules/monks-bloodsplats/images/${list.id}/${index}.webp`
-        const tex = getTexture(filename) || await loadTexture(filename);
+        let folder = list.folder || "/modules/monks-bloodsplats/images/";
+        let filename = `${folder}${list.id}/${index}.webp`
+        const tex = PIXI.Assets.cache.has(filename) ? getTexture(filename) : await loadTexture(filename);
         if (!tex)
             return;
 
@@ -471,7 +473,7 @@ Hooks.on("updateCombat", async function (combat, delta) {
                 let index = getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
                 if (index == undefined || index >= list.length) {
                     index = Math.floor(Math.random() * list.length);
-                    await token.document.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
+                    await token.document?.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
                 }
             }
         }
