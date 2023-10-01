@@ -1,3 +1,7 @@
+# version 11.05
+
+Add a UI to edit image folders
+
 # version 11.04
 
 Added ignore conflict with easy targeting
