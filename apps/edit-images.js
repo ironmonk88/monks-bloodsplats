@@ -35,6 +35,7 @@ export class EditImages extends FormApplication {
     _updateObject() {
         let data = this.imageLists.filter(c => !!c.id && !!c.name);
         game.settings.set('monks-bloodsplats', 'image-lists', data);
+        MonksBloodsplats.image_list = data;
         this.submitting = true;
     }
 
