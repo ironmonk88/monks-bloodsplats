@@ -169,7 +169,7 @@ export class MonksBloodsplats {
         }
 
         let folder = list.folder || `/modules/monks-bloodsplats/images/${list.id}`;
-        let ext = list.ext || ".webp";
+        let ext = list.ext || "webp";
         let filename = `${folder}/${index}.${ext}`
         const tex = PIXI.Assets.cache.has(filename) ? getTexture(filename) : await loadTexture(filename);
         if (!tex)
