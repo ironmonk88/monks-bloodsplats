@@ -1,0 +1,163 @@
+.monks-bloodsplats-edit-images .items-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: rgb(122, 121, 113);
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-list {
+    overflow-y: auto;
+    height: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    scrollbar-width: thin;
+    position: relative;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-list.min-height {
+    min-height: 80px;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-list ul {
+    margin: 0px;
+    padding: 0 0 0 5px;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-header {
+    font-family: 'Modesto Condensed', 'Palatino Linotype', serif;
+    font-size: var(--font-size-14);
+    text-align: center;
+    flex: 0 0 25px;
+    margin: 2px 0;
+    margin-left: 1px;
+    padding: 0;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px groove rgb(238, 237, 224);
+    color: var(--color-text-dark-primary);
+    font-weight: bold;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-list .item-header {
+    margin-left: 4px;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-header h3 {
+    padding-left: 5px;
+    font-family: 'Modesto Condensed', 'Palatino Linotype', serif;
+    font-weight: 700;
+    text-align: left;
+    font-size: var(--font-size-16);
+    margin-bottom: 1px;
+    color: rgb(122, 121, 113);
+}
+
+.monks-bloodsplats-edit-images .items-list .item-detail {
+    flex: 0 0 80px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-controls {
+    flex: 0 0 24px;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 8px;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-controls *:disabled {
+    cursor: no-drop;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-controls a {
+    font-size: var(--font-size-12);
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    color: rgb(122, 121, 113);
+}
+
+.monks-bloodsplats-edit-images .items-list .item-list .item-controls a:hover {
+    color: rgb(122, 121, 113);
+}
+
+.monks-bloodsplats-edit-images.sheet .items-list .item-list .item-controls a.active {
+    color: rgb(255, 100, 0);
+}
+
+.monks-bloodsplats-edit-images .items-list .item-header .item-control {
+    font-size: var(--font-size-12);
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    margin-right: 2px;
+    width: 22px;
+    flex: 0 0 22px;
+    height: 22px;
+    border-radius: 2px;
+    border: 1px solid rgb(192, 192, 192);
+    background: rgba(255, 255, 255, 0.4);
+    color: rgb(122, 121, 113);
+    line-height: 22px;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-control.text {
+    width: fit-content;
+    white-space: nowrap;
+    padding: 0px 5px;
+}
+
+.monks-bloodsplats-edit-images .items-list .item {
+    align-items: center;
+    padding: 0 2px;
+    border-bottom: 1px solid rgb(201, 199, 184);
+}
+
+.monks-bloodsplats-edit-images .items-list .item:last-child {
+    border-bottom: none;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-name {
+    flex: 2;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--font-size-14);
+    text-align: left;
+    align-items: center;
+    border-bottom: 0px;
+}
+
+.monks-bloodsplats-edit-images .items-list .item-name h3,
+.monks-bloodsplats-edit-images .items-list .item-name h4 {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.monks-bloodsplats-edit-images .items-list .item .item-name {
+    color: rgb(25, 24, 19);
+}
+
+.monks-bloodsplats-edit-images .items-list.alternate-rows li:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.monks-bloodsplats-edit-images .items-list .item input {
+    border-color: transparent;
+    color: rgb(25, 24, 19);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.monks-bloodsplats-edit-images .items-list .item input:hover {
+    border-color: unset;
+}

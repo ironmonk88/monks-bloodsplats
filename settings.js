@@ -1,5 +1,6 @@
 import { MonksBloodsplats, i18n } from "./monks-bloodsplats.js";
-import { EditTypes} from "./apps/edit-types.js"
+import { EditTypes } from "./apps/edit-types.js"
+import { EditImages } from "./apps/edit-images.js"
 
 export const registerSettings = function () {
     // Register any custom module settings here
@@ -10,10 +11,18 @@ export const registerSettings = function () {
 		'both': i18n("MonksBloodsplats.bloodsplatoptions.both")
 	}
 
+	game.settings.registerMenu(modulename, 'editImages', {
+		label: i18n("MonksBloodsplats.edit-images.name"),
+		hint: i18n("MonksBloodsplats.edit-images.hint"),
+		icon: 'fas fa-image',
+		restricted: true,
+		type: EditImages
+	});
+
 	game.settings.registerMenu(modulename, 'editTypes', {
 		label: i18n("MonksBloodsplats.edit-types.name"),
 		hint: i18n("MonksBloodsplats.edit-types.hint"),
-		icon: 'fas fa-coins',
+		icon: 'fas fa-list',
 		restricted: true,
 		type: EditTypes
 	});
@@ -124,28 +133,28 @@ export const registerSettings = function () {
 				"id": "blood",
 				"name": "Blood",
 				"color": "#ff0000",
-				"length": 222,
+				"count": 222,
 				"opacity": 1,
 			},
 			{
 				"id": "scorch",
 				"name": "Scorch Marks",
 				"color": "#000000",
-				"length": 16,
+				"count": 16,
 				"opacity": 1,
 			},
 			{
 				"id": "blob",
 				"name": "Blob",
 				"color": "#00ff00",
-				"length": 10,
+				"count": 10,
 				"opacity": 1,
 			},
 			{
 				"id": "bones",
 				"name": "Bones",
 				"color": "#ffffff",
-				"length": 17,
+				"count": 17,
 				"opacity": 1,
 				"size": 0.8,
 			},
@@ -153,7 +162,7 @@ export const registerSettings = function () {
 				"id": "corpse",
 				"name": "Corpses",
 				"color": "#ffffff",
-				"length": 11,
+				"count": 11,
 				"opacity": 1,
 			},
 		],

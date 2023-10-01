@@ -1,0 +1,64 @@
+<form>
+    <div class="items-list">
+        <div class="item-header flexrow" style="position: relative;">
+            <div class="item-detail" style=" text-align:left;padding-left:8px; flex: 0 0 100px;">{{localize 'MonksBloodsplats.Code'}}</div>
+            <div class="item-name">{{localize 'MonksBloodsplats.Name'}}</div>
+            <div class="item-detail" style="flex: 0 0 140px;">{{localize 'MonksBloodsplats.Color'}}</div>
+            <div class="item-detail">{{localize 'MonksBloodsplats.Count'}}</div>
+            <div class="item-detail">{{localize 'MonksBloodsplats.Opacity'}}</div>
+            <div class="item-name">{{localize 'MonksBloodsplats.Folder'}}</div>
+            <div class="item-detail">{{localize 'MonksBloodsplats.Ext'}}</div>
+            <div class="item-controls flexrow" style="flex: 0 0 50px;">
+                <a class="item-control text item-add"><i class="fas fa-plus"></i> {{localize 'MonksBloodsplats.Add'}}</a>
+            </div>
+        </div>
+        <ol class="item-list" style="max-height: 500px;">
+            {{#each imageLists}}
+            <li class="flexrow item" data-id="{{this.id}}">
+                <div class="item-detail" style="text-align:left;flex:0 0 100px;">
+                    <input type="text" name="id" autocomplete="off" value="{{this.id}}" />
+                </div>
+
+                <div class="item-name">
+                    <input type="text" name="name" autocomplete="off" value="{{this.name}}" />
+                </div>
+
+                <div class="item-detail flexrow" style="flex: 0 0 140px;">
+                    <input class="color" type="text" name="color" value="{{ this.color }}" style="flex: 1.5;">
+                    <input type="color" value="{{ this.color }}">
+                </div>
+
+                <div class="item-detail">
+                    <input type="number" name="count" value="{{ this.count }}" data-dtype="Number" min="0" step="1">
+                </div>
+
+                <div class="item-detail">
+                    <input type="number" name="opacity" value="{{ this.opacity }}" data-dtype="Number" min="0" max="1" step="0.01">
+                </div>
+
+                <div class="item-name flexrow">
+                    <input type="text" name="folder" autocomplete="off" value="{{this.folder}}" />
+                    <button class="folder-picker" type="button" data-type="folder" title="Browse Files" tabindex="-1" style="flex:0 0 30px;"><i class="fas fa-file-import fa-fw"></i></button>
+                </div>
+
+                <div class="item-detail">
+                    <input type="text" name="ext" autocomplete="off" placeholder="webp" value="{{this.ext}}" />
+                </div>
+
+                <div class="item-controls flexrow" style="flex: 0 0 50px;">
+                    <a class="item-control item-delete" title="{{localize 'MonksBloodsplats.Delete'}}"><i class="fas fa-trash"></i></a>
+                </div>
+            </li>
+            {{/each}}
+        </ol>
+    </div>
+
+    <footer class="sheet-footer flexrow" style="flex-grow:0;">
+        <button type="button" name="submit">
+            <i class="far fa-save"></i> {{localize 'MonksBloodsplats.SaveChanges'}}
+        </button>
+        <button type="button" name="reset">
+            <i class="fas fa-undo"></i> {{localize 'MonksBloodsplats.ResetDefaults'}}
+        </button>
+    </footer>
+</form>

@@ -14,10 +14,23 @@
 	"MonksBloodsplats.remove-effects.hint": "Remove all animated effects from defeated tokens",
 
 	"MonksBloodsplats.EditTypes": "Edit Types",
+	"MonksBloodsplats.EditImages": "Edit Images",
 	"MonksBloodsplats.DisableToken": "Disable Bloodsplat Tokens",
 	"MonksBloodsplats.SaveChanges": "Save Changes",
 	"MonksBloodsplats.ResetDefaults": "Reset Defaults",
+	"MonksBloodsplats.Code": "Code",
+	"MonksBloodsplats.Name": "Name",
+	"MonksBloodsplats.Color": "Color",
+	"MonksBloodsplats.Count": "Count",
+	"MonksBloodsplats.Folder": "Folder",
+	"MonksBloodsplats.Ext": "Ext.",
+	"MonksBloodsplats.Opacity": "Opacity",
+	"MonksBloodsplats.Delete": "Delete",
+	"MonksBloodsplats.Add": "Add",
+
 
 	"MonksBloodsplats.bloodsplatoptions.true": "Hide tokens for players",
-	"MonksBloodsplats.bloodsplatoptions.both": "Show tokens for players"
+	"MonksBloodsplats.bloodsplatoptions.both": "Show tokens for players",
+	"MonksBloodsplats.edit-images.name": "Edit Image Folders",
+	"MonksBloodsplats.edit-images.hint": "Choose which folders to use for bloodsplat images"
 }

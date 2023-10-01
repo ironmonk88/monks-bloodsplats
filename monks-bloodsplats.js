@@ -159,17 +159,18 @@ export class MonksBloodsplats {
         if (bloodType == 'none')
             return;
 
-        let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.length !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
+        let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.count !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
 
         let index = getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
-        if (index == undefined || index >= list.length) {
-            index = Math.floor(Math.random() * list.length);
+        if (index == undefined || index >= list.count) {
+            index = Math.floor(Math.random() * list.count);
             if (game.user.isGM)
                 await token.document.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
         }
 
-        let folder = list.folder || "/modules/monks-bloodsplats/images/";
-        let filename = `${folder}${list.id}/${index}.webp`
+        let folder = list.folder || `/modules/monks-bloodsplats/images/${list.id}`;
+        let ext = list.ext || ".webp";
+        let filename = `${folder}/${index}.${ext}`
         const tex = PIXI.Assets.cache.has(filename) ? getTexture(filename) : await loadTexture(filename);
         if (!tex)
             return;
@@ -444,11 +445,11 @@ Hooks.on("createCombatant", async function (combatant, data, options) {
             if (bloodType == 'none' || bloodType == 'unconscious')
                 return;
 
-            let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.length !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
+            let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.count !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
 
             let index = getProperty(token, 'flags.monks-bloodsplats.bloodsplat-index');
-            if (index == undefined || index >= list.length) {
-                index = Math.floor(Math.random() * list.length);
+            if (index == undefined || index >= list.count) {
+                index = Math.floor(Math.random() * list.count);
                 await token.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
             }
         }
@@ -468,11 +469,11 @@ Hooks.on("updateCombat", async function (combat, delta) {
                 if (bloodType == 'none' || bloodType == 'unconscious')
                     return;
 
-                let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.length !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
+                let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.count !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
 
                 let index = getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
-                if (index == undefined || index >= list.length) {
-                    index = Math.floor(Math.random() * list.length);
+                if (index == undefined || index >= list.count) {
+                    index = Math.floor(Math.random() * list.count);
                     await token.document?.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
                 }
             }
@@ -501,7 +502,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
 
         let bloodType = MonksBloodsplats.getBloodType(app.token);
         bloodType = bloodType.id || bloodType;
-        let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.length !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
+        let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.count !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
         let type = getProperty(app.token, "flags.monks-bloodsplats.bloodsplat-type");
         $('<div>')
             .addClass('form-group')
@@ -509,7 +510,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
             .append($('<div>').addClass('form-fields')
                 .append($('<select>').attr('name', 'flags.monks-bloodsplats.bloodsplat-type')
                     .append($('<option>').attr('value', '').html(`-- Default (${list.name}) --`))
-                    .append(MonksBloodsplats.image_list.filter((il) => il.length !== 0 || il.id == "none").map((il) => {
+                    .append(MonksBloodsplats.image_list.filter((il) => il.count !== 0 || il.id == "none").map((il) => {
                         return $('<option>').attr('value', il.id).html(il.name);
                     }))
                     .val(type)

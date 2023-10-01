@@ -20,7 +20,7 @@ export class EditTypes extends FormApplication {
 
     getData(options) {
         let bloodOptions = setting("image-lists")
-        .filter(i => i.length !== 0)
+            .filter(i => i.count !== 0)
             .map(i => {
             return {
                 id: i.id,
