@@ -1,3 +1,7 @@
+# version 11.06
+
+Fixed an issue with setting the bloodsplat colours in when changing the bloodsplat image folders
+
 # version 11.05
 
 Add a UI to edit image folders

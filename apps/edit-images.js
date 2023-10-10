@@ -95,8 +95,16 @@ export class EditImages extends FormApplication {
         $('.item-delete', html).click(this.removeList.bind(this));
         $('.item-add', html).click(this.addList.bind(this));
 
-        $('input[type="color"]', html).on('change', function () {
-            $(this).prev().val($(this).val());
+        let that = this;
+        $('input[type="color"]', html).on('change', function (event) {
+            $(this).prev().val($(this).val()).change();
+
+        });
+        $('input[name="color"]', html).on('change', function (event) {
+            let parent = event.currentTarget.closest('li.item');
+            let id = $("input[name='id']", parent).val();
+            let image = that.imageLists.find(c => c.id == id);
+            image.color = $(this).val();
         });
 
         $('button.folder-picker', html).click(this._onPickFolder.bind(this));
