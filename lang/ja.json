@@ -6,8 +6,31 @@
 	"MonksBloodsplats.bloodsplat-size.hint": "血痕の大きさが、元のコマのサイズに比例するようになります。",
 	"MonksBloodsplats.bloodsplat-opacity.name": "血痕の不透明度",
 	"MonksBloodsplats.bloodsplat-opacity.hint": "血痕の背後に表示されるコマの不透明度を設定します。",
+	"MonksBloodsplats.edit-types.name": "種類を編集",
+	"MonksBloodsplats.edit-types.hint": "コマに適用する画像の種類と色を選択します。",
+	"MonksBloodsplats.disabled-bloodsplats.name": "操作無効化",
+	"MonksBloodsplats.disabled-bloodsplats.hint": "コマメニューに敗北したコマの無効化ボタンを追加します。",
+	"MonksBloodsplats.remove-effects.name": "敗北効果を取り除く",
+	"MonksBloodsplats.remove-effects.hint": "動画効果を敗北コマから取り除きます。",
+
+	"MonksBloodsplats.EditTypes": "種類編集",
+	"MonksBloodsplats.EditImages": "画像編集",
+	"MonksBloodsplats.DisableToken": "血痕コマを無効化",
+	"MonksBloodsplats.SaveChanges": "変更を保存",
+	"MonksBloodsplats.ResetDefaults": "デフォルトにリセット",
+	"MonksBloodsplats.Code": "コード",
+	"MonksBloodsplats.Name": "名前",
+	"MonksBloodsplats.Color": "色",
+	"MonksBloodsplats.Count": "数",
+	"MonksBloodsplats.Folder": "フォルダ",
+	"MonksBloodsplats.Ext": "Ext.",
+	"MonksBloodsplats.Opacity": "不透明度",
+	"MonksBloodsplats.Delete": "削除",
+	"MonksBloodsplats.Add": "追加",
 
 	"MonksBloodsplats.bloodsplatoptions.false": "血痕なし",
 	"MonksBloodsplats.bloodsplatoptions.true": "血痕あり／コマを隠す",
 	"MonksBloodsplats.bloodsplatoptions.both": "血痕あり／コマも表示"
+	"MonksBloodsplats.edit-images.name": "画像フォルダ編集",
+	"MonksBloodsplats.edit-images.hint": "血痕の画像に使用するフォルダを選択します"
 }
