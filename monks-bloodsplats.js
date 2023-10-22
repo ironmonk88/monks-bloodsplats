@@ -71,10 +71,16 @@ export class MonksBloodsplats {
         MonksBloodsplats.blood_types = setting("blood-types");
 
         patchFunc("Token.prototype._drawOverlay", async function (wrapper, ...args) {
-            let [src, tint] = args;
             if (MonksBloodsplats.isDefeated(this) && this.actor?.type !== 'character') {
                 //this should be showing the bloodsplat, so don't show the skull overlay
                 return;
+            } else
+                return wrapper(...args);
+        }, "MIXED");
+        patchFunc("Token.prototype._drawBar", async function (wrapper, ...args) {
+            if (MonksBloodsplats.isDefeated(this) && this.actor?.type !== 'character') {
+                //this should be showing the bloodsplat, so don't show the resource bars
+                return false;
             } else
                 return wrapper(...args);
         }, "MIXED");
@@ -252,6 +258,9 @@ export class MonksBloodsplats {
                 let disabletoken = ui.controls.control.tools.find(t => { return t.name == "disabletoken" });
                 if (token.controlled && disabletoken?.active && setting("disabled-bloodsplats") && game.combat?.active && game.combat?.started)
                     token.release();
+
+                if (disabletoken?.active && token.targeted.has(game.user) && setting("disabled-bloodsplats"))
+                    token.setTarget(false, { releaseOthers: false });
 
                 if (token.bloodsplat?.transform == undefined) {
                     if (token._animateTo === undefined) {
@@ -588,6 +597,13 @@ Hooks.on("getSceneControlButtons", (controls) => {
             icon: "fas fa-splotch",
             toggle: true,
             active: true,
+            onClick: (active) => {
+                canvas.tokens.controlled.forEach(token => {
+                    if (active && MonksBloodsplats.isDefeated(token) && game.combat?.active && game.combat?.started) {
+                        token.release();
+                    }
+                });
+            }
         });
     }
 });

@@ -31,14 +31,14 @@ export class EditTypes extends FormApplication {
         // Populate choices
         let types = {};
         if (game.system.id == "dnd5e") {
-            for (let [k, v] of Object.entries(CONFIG.DND5E.creatureTypes)) {
+            for (let [k, v] of Object.entries(CONFIG.DND5E.creatureTypes || {})) {
                 types[k] = {
                     id: k,
                     label: game.i18n.localize(v),
                 };
             }
         } else if (game.system.id == "pf2e") {
-            for (let [k, v] of Object.entries(CONFIG.PF2E.monsterTraits)) {
+            for (let [k, v] of Object.entries(CONFIG.PF2E.monsterTraits || CONFIG.PF2E.creatureTraits || {})) {
                 types[k] = {
                     id: k,
                     label: game.i18n.localize(v),

@@ -74,6 +74,15 @@ export const registerSettings = function () {
 		type: Boolean,
 		requiresReload: true
 	});
+	game.settings.register(modulename, "remove-overlay", {
+		name: i18n("MonksBloodsplats.remove-overlay.name"),
+		hint: i18n("MonksBloodsplats.remove-overlay.hint"),
+		scope: "world",
+		config: false,
+		default: true,
+		type: Boolean,
+		requiresReload: true
+	});
 	game.settings.register(modulename, "remove-effects", {
 		name: i18n("MonksBloodsplats.remove-effects.name"),
 		hint: i18n("MonksBloodsplats.remove-effects.hint"),

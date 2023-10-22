@@ -1,3 +1,13 @@
+# version 11.07
+
+Fixed issue where the resource bar could be shown when a scene is first loaded.
+
+Cleared targets when a token is turned to a bloodsplat and disabled.
+
+Cleared targets when disabled tokens is turned on.
+
+Fixed an issue introduced with a Pathfinder2e change.
+
 # version 11.06
 
 Fixed an issue with setting the bloodsplat colours in when changing the bloodsplat image folders

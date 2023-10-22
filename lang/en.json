@@ -12,6 +12,8 @@
 	"MonksBloodsplats.disabled-bloodsplats.hint": "Add button to the token menu to toggle defated tokens being disabled.",
 	"MonksBloodsplats.remove-effects.name": "Remove Defeated Effects",
 	"MonksBloodsplats.remove-effects.hint": "Remove all animated effects from defeated tokens",
+	"MonksBloodsplats.remove-overlay.name": "Remove Defeated Overlay",
+	"MonksBloodsplats.remove-overlay.hint": "Remove all overlays from defeated tokens",
 
 	"MonksBloodsplats.EditTypes": "Edit Types",
 	"MonksBloodsplats.EditImages": "Edit Images",
