@@ -74,6 +74,12 @@ export const registerSettings = function () {
 		type: Boolean,
 		requiresReload: true
 	});
+	game.settings.register(modulename, "defeated-tokens-disabled", {
+		scope: "world",
+		config: false,
+		default: true,
+		type: Boolean,
+	});
 	game.settings.register(modulename, "remove-overlay", {
 		name: i18n("MonksBloodsplats.remove-overlay.name"),
 		hint: i18n("MonksBloodsplats.remove-overlay.hint"),

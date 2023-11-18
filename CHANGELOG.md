@@ -1,3 +1,11 @@
+# version 11.08
+
+Fixed issue where bloodsplat token disable wasn't being remembered.
+
+Fixed issue with elevation tooltip still showing for disabled bloodsplats
+
+Fixed issue with disabled tokens blocking enabled tokens from being controllable
+
 # version 11.07
 
 Fixed issue where the resource bar could be shown when a scene is first loaded.

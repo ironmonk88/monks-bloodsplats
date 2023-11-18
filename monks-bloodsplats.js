@@ -84,11 +84,17 @@ export class MonksBloodsplats {
             } else
                 return wrapper(...args);
         }, "MIXED");
-
+        patchFunc("Token.prototype._getTooltipText", function (wrapper, ...args) {
+            if (MonksBloodsplats.isDefeated(this) && this.actor?.type !== 'character') {
+                //this should be showing the bloodsplat, so don't show the tooltip
+                return "";
+            } else
+                return wrapper(...args);
+        }, "MIXED");
+        /*
         patchFunc("Token.prototype._canControl", function (wrapper, ...args) {
             let [user, event] = args;
-            let disabletoken = ui.controls.control.tools.find(t => { return t.name == "disabletoken" });
-            if (disabletoken?.active && setting("disabled-bloodsplats") && this.bloodsplat && game.combat?.active && game.combat?.started) {
+            if (setting("defeated-tokens-disabled") && setting("disabled-bloodsplats") && this.bloodsplat && game.combat?.active && game.combat?.started) {
                 return false;
             }
             return wrapper(...args);
@@ -96,12 +102,12 @@ export class MonksBloodsplats {
 
         patchFunc("Token.prototype._canHover", function (wrapper, ...args) {
             let [user, event] = args;
-            let disabletoken = ui.controls.control.tools.find(t => { return t.name == "disabletoken" });
-            if (disabletoken?.active && setting("disabled-bloodsplats") && this.bloodsplat && game.combat?.active && game.combat?.started) {
+            if (setting("defeated-tokens-disabled") && setting("disabled-bloodsplats") && this.bloodsplat && game.combat?.active && game.combat?.started) {
                 return false;
             }
             return wrapper(...args);
         }, "MIXED");
+        */
 
         patchFunc("TokenMesh.prototype.getDisplayAttributes", function (wrapper, ...args) {
             let result = wrapper(...args);
@@ -255,12 +261,15 @@ export class MonksBloodsplats {
                     return;
                 }
 
-                let disabletoken = ui.controls.control.tools.find(t => { return t.name == "disabletoken" });
-                if (token.controlled && disabletoken?.active && setting("disabled-bloodsplats") && game.combat?.active && game.combat?.started)
-                    token.release();
+                if (setting("defeated-tokens-disabled") && setting("disabled-bloodsplats")) {
+                    token.eventMode = "none";
+                    token.interactive = false;
+                    if (token.controlled && game.combat?.active && game.combat?.started)
+                        token.release();
 
-                if (disabletoken?.active && token.targeted.has(game.user) && setting("disabled-bloodsplats"))
-                    token.setTarget(false, { releaseOthers: false });
+                    if (token.targeted.has(game.user))
+                        token.setTarget(false, { releaseOthers: false });
+                }
 
                 if (token.bloodsplat?.transform == undefined) {
                     if (token._animateTo === undefined) {
@@ -301,6 +310,11 @@ export class MonksBloodsplats {
                 }
             }
         } else {
+            if (token.eventMode == "none") {
+                token.eventMode = "auto";
+                token.interactive = true;
+            }
+
             if (token.bloodsplat && token._animateTo === undefined) {
                 let animate = canvas.ready && !token._original && !MonksBloodsplats.canvasLoading;
 
@@ -596,11 +610,19 @@ Hooks.on("getSceneControlButtons", (controls) => {
             title: "MonksBloodsplats.DisableToken",
             icon: "fas fa-splotch",
             toggle: true,
-            active: true,
+            active: setting("defeated-tokens-disabled"),
             onClick: (active) => {
-                canvas.tokens.controlled.forEach(token => {
-                    if (active && MonksBloodsplats.isDefeated(token) && game.combat?.active && game.combat?.started) {
-                        token.release();
+                game.settings.set("monks-bloodsplats", "defeated-tokens-disabled", active);
+                canvas.tokens.placeables.forEach(token => {
+                    if (active && MonksBloodsplats.isDefeated(token)) {
+                        token.eventMode = "none";
+                        token.interactive = false;
+                        if (token.controlled && game.combat?.active && game.combat?.started) {
+                            token.release();
+                        }
+                    } else {
+                        token.eventMode = "auto";
+                        token.interactive = true;
                     }
                 });
             }
