@@ -503,6 +503,14 @@ Hooks.on("updateCombat", async function (combat, delta) {
         }
     }
 });
+Hooks.on("deleteCombat", async function (combat) {
+    if (setting("disabled-bloodsplats") && !game.combats.active) {
+        canvas.tokens.placeables.forEach(token => {
+            token.eventMode = "auto";
+            token.interactive = true;
+        });
+    }
+});
 
 Hooks.on("updateCombatant", async function (combatant, data, options) {
     let token = combatant.token;

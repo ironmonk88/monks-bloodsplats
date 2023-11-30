@@ -1,3 +1,9 @@
+# version 11.09
+
+Fixed issue with bloodsplats not allowing access after combat
+
+Fixing issue with using the bloossplat toolbar not setting per clients properly.
+
 # version 11.08
 
 Fixed issue where bloodsplat token disable wasn't being remembered.

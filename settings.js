@@ -75,7 +75,7 @@ export const registerSettings = function () {
 		requiresReload: true
 	});
 	game.settings.register(modulename, "defeated-tokens-disabled", {
-		scope: "world",
+		scope: "client",
 		config: false,
 		default: true,
 		type: Boolean,
