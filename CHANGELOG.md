@@ -1,3 +1,7 @@
+# version 11.10
+
+Fixing issue with bloodsplats still not allowing access after combat
+
 # version 11.09
 
 Fixed issue with bloodsplats not allowing access after combat

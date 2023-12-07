@@ -261,14 +261,17 @@ export class MonksBloodsplats {
                     return;
                 }
 
-                if (setting("defeated-tokens-disabled") && setting("disabled-bloodsplats")) {
+                if (setting("defeated-tokens-disabled") && setting("disabled-bloodsplats") && game.combat?.active && game.combat?.started) {
                     token.eventMode = "none";
                     token.interactive = false;
-                    if (token.controlled && game.combat?.active && game.combat?.started)
+                    if (token.controlled)
                         token.release();
 
                     if (token.targeted.has(game.user))
                         token.setTarget(false, { releaseOthers: false });
+                } else {
+                    token.eventMode = "auto";
+                    token.interactive = true;
                 }
 
                 if (token.bloodsplat?.transform == undefined) {
@@ -622,7 +625,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
             onClick: (active) => {
                 game.settings.set("monks-bloodsplats", "defeated-tokens-disabled", active);
                 canvas.tokens.placeables.forEach(token => {
-                    if (active && MonksBloodsplats.isDefeated(token)) {
+                    if (active && MonksBloodsplats.isDefeated(token) && game.combats.active) {
                         token.eventMode = "none";
                         token.interactive = false;
                         if (token.controlled && game.combat?.active && game.combat?.started) {
