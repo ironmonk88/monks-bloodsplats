@@ -1,3 +1,7 @@
+# version 11.11
+
+Removing weird bloodsplat image
+
 # version 11.10
 
 Fixing issue with bloodsplats still not allowing access after combat

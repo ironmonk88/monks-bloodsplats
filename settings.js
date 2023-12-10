@@ -148,7 +148,7 @@ export const registerSettings = function () {
 				"id": "blood",
 				"name": "Blood",
 				"color": "#ff0000",
-				"count": 222,
+				"count": 221,
 				"opacity": 1,
 			},
 			{
