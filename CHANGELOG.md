@@ -1,3 +1,7 @@
+# version 11.12
+
+Added support for PF1 and D&D3.5e
+
 # version 11.11
 
 Removing weird bloodsplat image

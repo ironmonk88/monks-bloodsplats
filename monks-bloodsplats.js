@@ -133,7 +133,13 @@ export class MonksBloodsplats {
             types = [getProperty(token, "actor.system.details.type.subtype"), getProperty(token, "actor.system.details.type.value")].filter(t => !!t);
         } else if (game.system.id == "pf2e") {
             types = getProperty(token, "actor.system.traits.value") || [];
+        } else if (game.system.id == "pf1") {
+            types = [getProperty(token, "actor.system.traits.type")];
+        } else if (game.system.id == "D35E") {
+            types = [getProperty(token, "actor.system.attributes.creatureType")];
         }
+
+        types = types.filter(t => !!t);
 
         let bloodType = {
             type: getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-type'),
