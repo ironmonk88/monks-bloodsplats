@@ -30,11 +30,18 @@ export class EditTypes extends FormApplication {
 
         // Populate choices
         let types = {};
-        if (["dnd5e", "pf1", "D35E"].includes(game.system.id)) {
+        if (["pf1", "D35E"].includes(game.system.id)) {
             for (let [k, v] of Object.entries(CONFIG[game.system.id.toUpperCase()].creatureTypes || {})) {
                 types[k] = {
                     id: k,
                     label: game.i18n.localize(v),
+                };
+            }
+        } else if (game.system.id == "dnd5e") {
+            for (let [k, v] of Object.entries(CONFIG[game.system.id.toUpperCase()].creatureTypes || {})) {
+                types[k] = {
+                    id: k,
+                    label: v.label,
                 };
             }
         } else if (game.system.id == "pf2e") {

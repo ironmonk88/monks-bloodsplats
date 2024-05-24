@@ -1,3 +1,7 @@
+# version 11.14
+
+Fixed issue with dnd5e and configuring the bloodsplat types
+
 # version 11.12
 
 Added support for PF1 and D&D3.5e
