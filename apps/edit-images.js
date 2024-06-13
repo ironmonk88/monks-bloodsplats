@@ -8,7 +8,7 @@ export class EditImages extends FormApplication {
     }
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             id: "bloodsplats-edit-images",
             title: i18n("MonksBloodsplats.EditImages"),
             classes: ["monks-bloodsplats-edit-images"],

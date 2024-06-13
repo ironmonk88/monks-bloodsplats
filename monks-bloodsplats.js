@@ -109,12 +109,12 @@ export class MonksBloodsplats {
         }, "MIXED");
         */
 
-        patchFunc("TokenMesh.prototype.getDisplayAttributes", function (wrapper, ...args) {
+        patchFunc("Token.prototype._refreshMesh", function (wrapper, ...args) {
             let result = wrapper(...args);
 
-            if (MonksBloodsplats.isDefeated(this.object) && this.object?.actor?.type !== 'character') {
+            if (MonksBloodsplats.isDefeated(this) && this.object?.type !== 'character') {
                 const iconAlpha = (game.user.isGM || (setting("show-bloodsplat") == "both" && !this.object?.document.hidden) ? setting("bloodsplat-opacity") : 0);
-                result.alpha = iconAlpha;
+                this.mesh.alpha = iconAlpha;
             }
 
             return result;
@@ -130,21 +130,21 @@ export class MonksBloodsplats {
     static getBloodType(token) {
         let types = [];
         if (game.system.id == "dnd5e") {
-            types = [getProperty(token, "actor.system.details.type.subtype"), getProperty(token, "actor.system.details.type.value")].filter(t => !!t);
+            types = [foundry.utils.getProperty(token, "actor.system.details.type.subtype"), foundry.utils.getProperty(token, "actor.system.details.type.value")].filter(t => !!t);
         } else if (game.system.id == "pf2e") {
-            types = getProperty(token, "actor.system.traits.value") || [];
+            types = foundry.utils.getProperty(token, "actor.system.traits.value") || [];
         } else if (game.system.id == "pf1") {
-            types = [getProperty(token, "actor.system.traits.type")];
+            types = [foundry.utils.getProperty(token, "actor.system.traits.type")];
         } else if (game.system.id == "D35E") {
-            types = [getProperty(token, "actor.system.attributes.creatureType")];
+            types = [foundry.utils.getProperty(token, "actor.system.attributes.creatureType")];
         }
 
         types = types.filter(t => !!t);
 
         let bloodType = {
-            type: getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-type'),
-            color: getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-colour'),
-            size: getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-size')
+            type: foundry.utils.getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-type'),
+            color: foundry.utils.getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-colour'),
+            size: foundry.utils.getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-size')
         };
         if (bloodType.type == undefined || bloodType.color == undefined || bloodType.size == undefined) {
             for (let type of types) {
@@ -179,7 +179,7 @@ export class MonksBloodsplats {
 
         let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.count !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
 
-        let index = getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
+        let index = foundry.utils.getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
         if (index == undefined || index >= list.count) {
             index = Math.floor(Math.random() * list.count);
             if (game.user.isGM)
@@ -226,15 +226,15 @@ export class MonksBloodsplats {
 
         for (let scene of game.scenes) {
             for (let token of scene.tokens) {
-                if (getProperty(token, "flags.monks-little-details.bloodsplat-colour")) {
-                    await token.update({ "flags.monks-bloodsplats.bloodsplat-colour": getProperty(token, "flags.monks-little-details.bloodsplat-colour") });
+                if (foundry.utils.getProperty(token, "flags.monks-little-details.bloodsplat-colour")) {
+                    await token.update({ "flags.monks-bloodsplats.bloodsplat-colour": foundry.utils.getProperty(token, "flags.monks-little-details.bloodsplat-colour") });
                 }
             }
         }
 
         for (let actor of game.actors) {
-            if (getProperty(actor.prototypeToken, "flags.monks-little-details.bloodsplat-colour")) {
-                await actor.prototypeToken.update({ "flags.monks-bloodsplats.bloodsplat-colour": getProperty(actor.prototypeToken, "flags.monks-little-details.bloodsplat-colour") });
+            if (foundry.utils.getProperty(actor.prototypeToken, "flags.monks-little-details.bloodsplat-colour")) {
+                await actor.prototypeToken.update({ "flags.monks-bloodsplats.bloodsplat-colour": foundry.utils.getProperty(actor.prototypeToken, "flags.monks-little-details.bloodsplat-colour") });
             }
         }
 
@@ -244,9 +244,7 @@ export class MonksBloodsplats {
     }
 
     static isDefeated(token) {
-        return (token && (token.combatant?.defeated ||
-            !!token.actor?.statuses.has(CONFIG.specialStatusEffects.DEFEATED) ||
-            token.document?.overlayEffect == CONFIG.controlIcons.defeated));
+        return (token && (token.combatant && token.combatant?.defeated) || !!token.actor?.statuses.has(CONFIG.specialStatusEffects.DEFEATED));
     }
 
     static async refreshBloodsplat(token) {
@@ -263,7 +261,7 @@ export class MonksBloodsplats {
                 }
             } else if (token.document._id != undefined) {
                 if (MonksBloodsplats.getBloodType(token).type == 'unconscious') {
-                    token.mesh.alpha = token.mesh.data.alpha;
+                    token.mesh.alpha = token.mesh.alpha;
                     return;
                 }
 
@@ -287,8 +285,9 @@ export class MonksBloodsplats {
                             token.bloodsplat.destroy();
 
                         token.bloodsplat = await MonksBloodsplats.getBloodImage(token, animate);
-                        if (token.bloodsplat)
-                            canvas.grid.bloodsplats.addChild(token.bloodsplat);
+                        if (token.bloodsplat) {
+                            canvas.regions.bloodsplats?.addChild(token.bloodsplat);
+                        }
 
                         const iconAlpha = (game.user.isGM || (setting("show-bloodsplat") == "both" && !token.document.hidden) ? setting("bloodsplat-opacity") : 0);
                         if (animate && token.bloodsplat) {
@@ -327,7 +326,7 @@ export class MonksBloodsplats {
             if (token.bloodsplat && token._animateTo === undefined) {
                 let animate = canvas.ready && !token._original && !MonksBloodsplats.canvasLoading;
 
-                const alpha = token.mesh.data.alpha;
+                const alpha = token.alpha;
                 if (animate) {
                     token._animateTo = alpha;
 
@@ -479,7 +478,7 @@ Hooks.on("createCombatant", async function (combatant, data, options) {
 
             let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.count !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
 
-            let index = getProperty(token, 'flags.monks-bloodsplats.bloodsplat-index');
+            let index = foundry.utils.getProperty(token, 'flags.monks-bloodsplats.bloodsplat-index');
             if (index == undefined || index >= list.count) {
                 index = Math.floor(Math.random() * list.count);
                 await token.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
@@ -503,7 +502,7 @@ Hooks.on("updateCombat", async function (combat, delta) {
 
                 let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.count !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
 
-                let index = getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
+                let index = foundry.utils.getProperty(token.document, 'flags.monks-bloodsplats.bloodsplat-index');
                 if (index == undefined || index >= list.count) {
                     index = Math.floor(Math.random() * list.count);
                     await token.document?.setFlag('monks-bloodsplats', 'bloodsplat-index', index);
@@ -530,7 +529,7 @@ Hooks.on("updateCombatant", async function (combatant, data, options) {
 
 Hooks.on("renderTokenConfig", (app, html, data) => {
     if (game.user.isGM) {
-        let colour = getProperty(app.token, "flags.monks-bloodsplats.bloodsplat-colour");
+        let colour = foundry.utils.getProperty(app.token, "flags.monks-bloodsplats.bloodsplat-colour");
         $('<div>')
             .addClass('form-group')
             .append($('<label>').html('Bloodsplat Colour'))
@@ -543,7 +542,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
         let bloodType = MonksBloodsplats.getBloodType(app.token);
         bloodType = bloodType.id || bloodType;
         let list = MonksBloodsplats.image_list.find((i) => i.id == bloodType && i.count !== 0) || MonksBloodsplats.image_list.find((i) => i.id == "blood");
-        let type = getProperty(app.token, "flags.monks-bloodsplats.bloodsplat-type");
+        let type = foundry.utils.getProperty(app.token, "flags.monks-bloodsplats.bloodsplat-type");
         $('<div>')
             .addClass('form-group')
             .append($('<label>').html('Bloodsplat Image'))
@@ -563,7 +562,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
 
 Hooks.on("updateToken", async (document, data) => {
     let token = document.object;
-    if (token && getProperty(data, "flags.monks-bloodsplats") != undefined) {
+    if (token && foundry.utils.getProperty(data, "flags.monks-bloodsplats") != undefined) {
         //refresh the bloodsplat if there is one
         if (token.bloodsplat) {
             token.bloodsplat.destroy();
@@ -607,8 +606,8 @@ Hooks.on("sightRefresh", function () {
     }
 });
 
-Hooks.on("drawGridLayer", function (layer) {
-    layer.bloodsplats = layer.addChildAt(new PIXI.Container(), layer.ldmarkers?.parent ? layer.getChildIndex(layer.ldmarkers) : layer.getChildIndex(layer.borders));
+Hooks.on("drawRegionLayer", function (layer) {
+    layer.bloodsplats = layer.addChildAt(new PIXI.Container(), layer.children.length - 1);
 });
 
 

@@ -1,3 +1,7 @@
+# version 12.01
+
+v12 compatibility
+
 # version 11.14
 
 Fixed issue with dnd5e and configuring the bloodsplat types

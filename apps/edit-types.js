@@ -6,7 +6,7 @@ export class EditTypes extends FormApplication {
     }
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             id: "bloodsplats-edit-types",
             title: i18n("MonksBloodsplats.EditTypes"),
             classes: ["edit-types"],
@@ -52,7 +52,7 @@ export class EditTypes extends FormApplication {
                 };
             }
         }
-        types = mergeObject(types, setting("blood-types"));
+        types = foundry.utils.mergeObject(types, setting("blood-types"));
         types.default.label = "Default";
         types.default.default = true;
 
@@ -72,7 +72,7 @@ export class EditTypes extends FormApplication {
     }
 
     _updateObject(event, formData) {
-        let data = expandObject(formData).types;
+        let data = foundry.utils.expandObject(formData).types;
         // remove any entires that have a blank type and blank color, remove either blank or color if it's blank
         Object.entries(data).forEach(([k, v]) => {
             if (v.type == "" && v.color == "" && k != "default") {
